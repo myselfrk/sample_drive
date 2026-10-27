@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Geist";
+  src: url("./assets/fonts/GeistVF.woff") format("woff");
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Geist Mono";
+  src: url("./assets/fonts/GeistMonoVF.woff") format("woff");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@theme {
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
+  --color-ink: #050510;
+  --color-phase-accel: #22d3ee;
+  --color-phase-cruise: #818cf8;
+  --color-phase-brake: #fb7185;
+  --color-phase-stop: #94a3b8;
+}
+
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: #050510;
+  color: #fff;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes fadeOut { 0% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes pop { 0% { opacity: 0; transform: scale(1.35); } 25% { opacity: 1; transform: scale(1); } 100% { opacity: 0.85; transform: scale(0.96); } }
