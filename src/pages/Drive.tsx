@@ -28,6 +28,12 @@ function SimRunner({ sim, runningRef, onFinish, onFail }: { sim: DriveSim; runni
   return null;
 }
 
+/** Mounts only once everything above it in the Suspense boundary (the GLBs) has resolved. */
+function SceneReady({ onReady }: { onReady: () => void }) {
+  useEffect(() => { onReady(); }, [onReady]);
+  return null;
+}
+
 export default function Drive() {
   const navigate = useNavigate();
   const setRecord = useDriveStore((s) => s.setRecord);
@@ -38,6 +44,7 @@ export default function Drive() {
   useEffect(() => { if (import.meta.env.DEV) (window as unknown as { __sim?: DriveSim }).__sim = sim; }, [sim]);
   const [stage, setStage] = useState<Stage>("countdown");
   const [count, setCount] = useState<number | "GO">(3);
+  const [sceneReady, setSceneReady] = useState(false);
   const [paused, setPaused] = useState(false);
   const [graphOpen, setGraphOpen] = useState(() => window.innerWidth >= 640);
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -64,7 +71,7 @@ export default function Drive() {
 
   // 3 - 2 - 1 - GO
   useEffect(() => {
-    setStage("countdown"); setCount(3); setSummary(null); setToasts([]); setPaused(false);
+    setStage("countdown"); setCount(3); setSceneReady(false); setSummary(null); setToasts([]); setPaused(false);
     let n = 3;
     const id = window.setInterval(() => {
       n -= 1;
@@ -110,10 +117,11 @@ export default function Drive() {
             gl={{ antialias: false, powerPreference: "high-performance", toneMapping: THREE.NoToneMapping }}>
             <Suspense fallback={null}>
               <World key={run} sim={sim}><ChaseCamera sim={sim} /></World>
+              <SceneReady key={run} onReady={() => setSceneReady(true)} />
               <SimRunner key={run} sim={sim} runningRef={runningRef} onFinish={onFinish} onFail={onFail} />
             </Suspense>
           </Canvas>
-          <SceneLoader />
+          <SceneLoader ready={sceneReady} />
 
           {/* HUD (top-left) */}
           <div className="absolute top-3 left-3 sm:top-5 sm:left-5 z-10"><Hud sim={sim} /></div>
